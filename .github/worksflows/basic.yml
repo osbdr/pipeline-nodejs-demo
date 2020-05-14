@@ -1,0 +1,81 @@
+name: Standard Pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  outdated:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+
+    - name: npm ci
+      run: npm ci
+
+    - name: outdated
+      run: npm outdated
+
+  lint:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+        
+    - name: npm ci
+      run: npm ci
+
+    - name: outdated
+      run: npx postcss styles.css -c .
+
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+        
+    - name: npm ci
+      run: npm ci
+
+    - name: outdated
+      run: npm test
+
+  security:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.8.2
+
+    - name: pip install nodejsscan
+      run: pip install nodejsscan==3.7
+
+    - name: nodejsscan
+      run: nodejsscan -f server.js -o report.json && grep -q "\[\]" report.json && echo "Nothing found" || cat report.json && exit 1
+
+    - name: show report
+      if:  ${{ success() || failure() }}
+      run: cat report.json
+
+    - name: upload report
+      if:  ${{ success() || failure() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: Nodejsscan Security Report
+        path: report.json
+
+  docker:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: docker build
+      run: docker build -t node-demo .
