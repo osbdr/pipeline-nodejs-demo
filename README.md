@@ -4,7 +4,7 @@ Beispiel einer Pipeline, die folgendes kann:
  - Outdated Check
  - CSS Lint mit `PostCSS` & `stylelint`
  - Tests mit `Jest` & `SuperTest`
- - Security Check mit NodeJsScan
+ - Security Check mit `NodeJsScan`
  - Erstellung eines Docker Images
 
 > **Hinweis**: 
@@ -73,7 +73,7 @@ jobs:
       run: pip install nodejsscan==3.7
 
     - name: nodejsscan
-      run: nodejsscan -f server.js -o report.json && grep -q "\[\]" report.json && echo "Nothing found" || cat report.json && exit 1
+      run: nodejsscan -f server.js -o report.json && grep -q "\[\]" report.json && echo "Nothing found" || { cat report.json; exit 1; }
 
     - name: show report
       if:  ${{ success() || failure() }}
