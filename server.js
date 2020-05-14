@@ -9,9 +9,3 @@ module.exports = app.listen(3000, function () {
 app.get('/', function (req, res) {
   res.send('Hello!');
 });
-
-app.get('/xss', function (req, res) {
-  res.send(req.query.id);
-});
-
-
