@@ -1,17 +1,3 @@
-# pipeline-node-demo
-
-Beispiel einer Pipeline, die folgendes kann:
- - Outdated Check
- - CSS Lint mit `PostCSS` & `stylelint`
- - Tests mit `Jest` & `SuperTest`
- - Security Check mit NodeJsScan
- - Erstellung eines Docker Images
-
-> **Hinweis**: 
-> - `stylelint` produziert standardmäßig nur Warnungen, die die Pipeline nicht fehlschlagen lassen. `postcss-reporter` konvertiert die Warnungen zu Fehlern, damit die Pipeline entsprechend reagiert.
-> - `NodeJsScan` endet unabhängig vom Ergebnis immer mit Exit Code `0`, damit die Pipeline entsprechend reagiert wurde der Befehl im Folgenden erweitert.
-
-```
 name: Standard Pipeline
 
 on:
@@ -93,15 +79,3 @@ jobs:
 
     - name: docker build
       run: docker build -t node-demo .
-```
-
-## Referenzen
-- npm outdated: https://docs.npmjs.com/cli-commands/outdated.html
-- PostCSS: https://postcss.org/
-- stylelint: https://stylelint.io/
-- postcss-reporter: https://github.com/postcss/postcss-reporter
-- Jest: https://jestjs.io/
-- SuperTest: https://github.com/visionmedia/supertest
-- NodeJsScan: https://github.com/ajinabraham/nodejsscan
-
-- Docker Pipeline: https://partner.bdr.de/gitlab/kfe-devops/docker-demo
