@@ -30,7 +30,7 @@ jobs:
     - name: npm ci
       run: npm ci
 
-    - name: outdated
+    - name: lint
       run: npx postcss styles.css -c .
 
   test:
@@ -44,7 +44,7 @@ jobs:
     - name: npm ci
       run: npm ci
 
-    - name: outdated
+    - name: test
       run: npm test
 
   security:
