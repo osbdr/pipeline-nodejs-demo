@@ -1,4 +1,4 @@
-# pipeline-node-demo
+# pipeline-nodejs-demo
 
 Beispiel einer Pipeline, die folgendes kann:
  - Outdated Check
@@ -7,20 +7,30 @@ Beispiel einer Pipeline, die folgendes kann:
  - Security Check mit `NodeJsScan`
  - Erstellung eines Docker Images
 
-> **Hinweis**: 
+Die Dependencies werden mit Renovate aktualisiert. Mehr Infos: https://github.com/renovatebot/renovate
+
+
+> **Hinweise**: 
 > - `stylelint` produziert standardmäßig nur Warnungen, die die Pipeline nicht fehlschlagen lassen. `postcss-reporter` konvertiert die Warnungen zu Fehlern, damit die Pipeline entsprechend reagiert.
-> - `NodeJsScan` endet unabhängig vom Ergebnis immer mit Exit Code `0`, damit die Pipeline entsprechend reagiert wurde der Befehl im Folgenden erweitert.
+> - `NodeJsScan` endet unabhängig vom Ergebnis immer mit Exit Code `0`, damit die Pipeline entsprechend reagiert wurde der Befehl erweitert.
 
 ```
+  
 name: Standard Pipeline
 
 on:
-  push:
   pull_request:
+    branches: '**'
+  push:
+    branches:
+      - develop
+  schedule:
+    - cron: '0 20 * * 5'
 
 jobs:
   outdated:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
+    if: startsWith(github.head_ref, 'renovate') == false
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
@@ -34,7 +44,7 @@ jobs:
       run: npm outdated
 
   lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
@@ -44,11 +54,11 @@ jobs:
     - name: npm ci
       run: npm ci
 
-    - name: outdated
+    - name: lint
       run: npx postcss styles.css -c .
 
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
@@ -58,11 +68,11 @@ jobs:
     - name: npm ci
       run: npm ci
 
-    - name: outdated
+    - name: test
       run: npm test
 
   security:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -87,7 +97,7 @@ jobs:
         path: report.json
 
   docker:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
 
